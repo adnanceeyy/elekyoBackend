@@ -14,7 +14,7 @@ app.use(express.json());
 
 // SERVE IMAGES FROM UPLOADS FOLDER
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
- 
+
 // Home route
 app.get('/', (req, res) => {
   res.send('Eleckyo Backend is running! 🎉🚀');
@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 const productRoutes = require('./routes/productRoutes');
 app.use('/api/products', productRoutes);
 
-// 404 Handler - Place this AFTER all routes
+// 404 Handler
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found 😅' });
 });
@@ -43,12 +43,13 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB Connected ✅'))
   .catch((err) => {
     console.error('MongoDB Connection Error:', err.message);
-    process.exit(1);
+    // Don't exit in production — Render will restart anyway
+    // process.exit(1);  ← Remove or comment this line
   });
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT} 🚀`);
-  console.log(`Images available at: http://localhost:${PORT}/uploads/images/your-image.png 🖼️`);
+app.listen(PORT, '0.0.0.0', () => {  // ← Important: add '0.0.0.0'
+  console.log(`Server running on port ${PORT} 🚀`);
+  console.log(`Images available at: /uploads/images/your-image.png 🖼️`);
 });
