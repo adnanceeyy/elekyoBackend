@@ -52,6 +52,28 @@ router.post('/', async (req, res) => {
   }
 });
 
+// PUT - Update a product by custom id
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedProduct = await Product.findOneAndUpdate(
+      { id: Number(req.params.id) },
+      req.body,
+      { new: true } // Return the updated document
+    );
+    
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    
+    res.json({
+      message: "Product updated successfully!",
+      product: updatedProduct
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // DELETE - Delete a product by custom id
 router.delete('/:id', async (req, res) => {
   try {

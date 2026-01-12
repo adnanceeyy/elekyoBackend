@@ -14,7 +14,8 @@ app.use(express.json());
 
 // SERVE IMAGES FROM UPLOADS FOLDER
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
+const orderRoutes = require('./routes/orders');
+app.use('/api/orders', orderRoutes);
 // Home route
 app.get('/', (req, res) => {
   res.send('Eleckyo Backend is running! 🎉🚀');
@@ -22,7 +23,12 @@ app.get('/', (req, res) => {
 
 // Routes
 const productRoutes = require('./routes/productRoutes');
+const userRoutes = require('./routes/userRoutes');
+
 app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes);
+const cartRoutes = require('./routes/cartRoutes');
+app.use('/api/cart', cartRoutes);
 
 // 404 Handler
 app.use((req, res) => {

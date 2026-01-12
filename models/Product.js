@@ -13,6 +13,7 @@ const productSchema = new mongoose.Schema({
   color: String,
   off: String, // e.g., "10%"
   image: { type: String, required: true },
+  images: [String], // Array of additional image URLs
   category: String,
   countInStock: { type: Number, default: 0 },
   catogeryId: Number // Your category number (1, 2, 3...)
