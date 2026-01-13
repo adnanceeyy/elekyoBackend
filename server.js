@@ -10,7 +10,8 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // SERVE IMAGES FROM UPLOADS FOLDER
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -37,20 +38,26 @@ app.use((req, res) => {
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Unhandled Error:', err);
   res.status(500).json({ 
-    message: 'Server Error',
-    error: process.env.NODE_ENV === 'production' ? {} : err.message 
+    message: 'Internal Server Error',
+    error: process.env.NODE_ENV === 'production' ? 'Please check backend logs' : err.message 
   });
+});
+
+// Handle unhandled rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB Connected ✅'))
   .catch((err) => {
-    console.error('MongoDB Connection Error:', err.message);
-    // Don't exit in production — Render will restart anyway
-    // process.exit(1);  ← Remove or comment this line
+    console.error('MongoDB Connection Error ❌:', err.name, err.message);
+    if (err.name === 'MongoParseError') {
+      console.error('Check your MONGO_URI format in .env');
+    }
   });
 
 // Start server

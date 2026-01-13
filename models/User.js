@@ -33,6 +33,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'user', // 'user' or 'admin'
   },
+  phone: {
+    type: String,
+    default: ""
+  },
+  address: {
+    type: String,
+    default: ""
+  },
   loginHistory: [loginHistorySchema],
   createdAt: {
     type: Date,
