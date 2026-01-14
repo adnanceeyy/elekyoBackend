@@ -71,6 +71,23 @@ router.post('/merge', async (req, res) => {
   }
 });
 
+// Update full cart items
+router.put('/', async (req, res) => {
+  const { email, items } = req.body;
+  try {
+    let cart = await Cart.findOne({ email });
+    if (!cart) {
+      cart = new Cart({ email, items });
+    } else {
+      cart.items = items;
+    }
+    await cart.save();
+    res.json(cart);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Clear Cart
 router.delete('/:email', async (req, res) => {
   try {

@@ -37,4 +37,15 @@ router.post('/', async (req, res) => {
   }
 });
 
+// GET /api/orders/user/:email - Get orders for a specific user
+router.get('/user/:email', async (req, res) => {
+  try {
+    const email = req.params.email.toLowerCase();
+    const orders = await Order.find({ 'customerDetails.email': new RegExp(`^${email}$`, 'i') }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
