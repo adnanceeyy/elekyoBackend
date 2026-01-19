@@ -50,13 +50,23 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
+// MongoDB Connection Options for Serverless
+const mongooseOptions = {
+  bufferCommands: false, // Disable buffering so we fail fast if not connected
+  autoIndex: true,       // Can be false in production for performance
+};
+
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, mongooseOptions)
   .then(() => console.log('MongoDB Connected ✅'))
   .catch((err) => {
-    console.error('MongoDB Connection Error ❌:', err.name, err.message);
+    console.error('MongoDB Connection Error ❌:');
+    console.error('Name:', err.name);
+    console.error('Message:', err.message);
+    console.error('Full Error:', err);
+    
     if (err.name === 'MongoParseError') {
-      console.error('Check your MONGO_URI format in .env');
+      console.error('Check your MONGO_URI format in Vercel settings');
     }
   });
 

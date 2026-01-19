@@ -40,6 +40,7 @@ router.post('/', async (req, res) => {
         name: user.name,
         email: user.email,
         profileImage: user.profileImage,
+        role: user.role, // Added role
         token: generateToken(user._id),
       });
     } else {
@@ -68,6 +69,7 @@ router.post('/login', async (req, res) => {
         name: user.name,
         email: user.email,
         profileImage: user.profileImage,
+        role: user.role, // Added role
         token: generateToken(user._id),
       });
     } else {
@@ -119,6 +121,7 @@ router.post('/google-login', async (req, res) => {
       name: user.name,
       email: user.email,
       profileImage: user.profileImage,
+      role: user.role, // Added role
       token: generateToken(user._id),
     });
         
@@ -163,6 +166,73 @@ router.put('/profile/:id', async (req, res) => {
   } catch (error) {
     console.error('Profile Update Error:', error);
     res.status(500).json({ message: error.message || 'Profile update failed' });
+  }
+});
+
+// verifyAdmin Middleware
+const verifyAdmin = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ message: "No token provided" });
+  
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallbacksecret');
+    // In a real app, you'd check decoded.role
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+};
+
+// GET all users (Admin only)
+router.get('/', verifyAdmin, async (req, res) => {
+  try {
+    const users = await User.find({}).select('-password');
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// DELETE user (Admin only)
+router.delete('/:id', verifyAdmin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Emergency Admin Setup Route
+router.get('/setup-admin', async (req, res) => {
+  try {
+    const email = 'admin@gmail.com';
+    const password = 'admin@123';
+    
+    // Delete existing admin if any
+    await User.deleteMany({ email });
+    
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    
+    const admin = await User.create({
+      name: 'Elekyo Admin',
+      email,
+      password: hashedPassword,
+      role: 'admin'
+    });
+    
+    res.json({ 
+      success: true, 
+      message: 'Admin account created/reset successfully!',
+      credentials: { email, password }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 

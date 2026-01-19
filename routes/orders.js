@@ -48,4 +48,24 @@ router.get('/user/:email', async (req, res) => {
   }
 });
 
+// PUT /api/orders/:id - Update order status
+router.put('/:id', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.json({ message: 'Order status updated', order });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
