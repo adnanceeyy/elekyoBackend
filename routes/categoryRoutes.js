@@ -74,7 +74,7 @@ router.get("/:id", async (req, res) => {
 // CREATE Category (Admin)
 router.post("/", verifyAdmin, async (req, res) => {
   try {
-    const { name, description, color, icon } = req.body;
+    const { name, description, color, icon, image } = req.body;
     
     const existing = await Category.findOne({ name });
     if (existing) {
@@ -85,7 +85,8 @@ router.post("/", verifyAdmin, async (req, res) => {
       name,
       description,
       color,
-      icon
+      icon,
+      image
     });
 
     const savedCategory = await category.save();
@@ -98,7 +99,7 @@ router.post("/", verifyAdmin, async (req, res) => {
 // UPDATE Category (Admin)
 router.put("/:id", verifyAdmin, async (req, res) => {
   try {
-    const { name, description, color, icon } = req.body;
+    const { name, description, color, icon, image } = req.body;
     const category = await Category.findById(req.params.id);
 
     if (!category) {
@@ -109,6 +110,7 @@ router.put("/:id", verifyAdmin, async (req, res) => {
     if (description) category.description = description;
     if (color) category.color = color;
     if (icon) category.icon = icon;
+    if (image !== undefined) category.image = image;
 
     const updatedCategory = await category.save();
     res.json(updatedCategory);
