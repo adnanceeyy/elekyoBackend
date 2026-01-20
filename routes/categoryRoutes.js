@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const Category = require("../models/Category");
 const Product = require("../models/Product"); // To count products
 const jwt = require("jsonwebtoken");
