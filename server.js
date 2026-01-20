@@ -32,6 +32,8 @@ const cartRoutes = require('./routes/cartRoutes');
 app.use('/api/cart', cartRoutes);
 const categoryRoutes = require('./routes/categoryRoutes');
 app.use('/api/categories', categoryRoutes);
+const settingsRoutes = require('./routes/settingsRoutes');
+app.use('/api/settings', settingsRoutes);
 
 // 404 Handler
 app.use((req, res) => {
