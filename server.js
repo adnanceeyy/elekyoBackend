@@ -30,6 +30,8 @@ app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 const cartRoutes = require('./routes/cartRoutes');
 app.use('/api/cart', cartRoutes);
+const categoryRoutes = require('./routes/categoryRoutes');
+app.use('/api/categories', categoryRoutes);
 
 // 404 Handler
 app.use((req, res) => {

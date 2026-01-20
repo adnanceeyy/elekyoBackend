@@ -16,7 +16,10 @@ const productSchema = new mongoose.Schema({
   images: [String], // Array of additional image URLs
   category: String,
   countInStock: { type: Number, default: 0 },
-  catogeryId: Number // Your category number (1, 2, 3...)
+  catogeryId: Number, // Your category number (1, 2, 3...)
+  brand: String,
+  model: String,
+  warranty: String
 }, {
   timestamps: true // Adds createdAt and updatedAt automatically
 });

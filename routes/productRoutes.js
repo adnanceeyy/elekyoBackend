@@ -43,15 +43,27 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET single product by custom id
+// Helper to find product by id or _id
+const findProduct = async (idParam) => {
+  let product = null;
+  // Try custom numeric ID first
+  if (!isNaN(idParam)) {
+    product = await Product.findOne({ id: Number(idParam) });
+  }
+  // Fallback to MongoDB _id
+  if (!product && mongoose.isValidObjectId(idParam)) {
+    product = await Product.findById(idParam);
+  }
+  return product;
+};
+
+// GET single product by custom id or _id
 router.get("/:id", async (req, res) => {
   try {
-    const product = await Product.findOne({ id: Number(req.params.id) });
-
+    const product = await findProduct(req.params.id);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-
     res.json(product);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -72,6 +84,12 @@ router.post("/", verifyAdmin, async (req, res) => {
         products,
       });
     } else {
+      // Auto-generate ID if not provided
+      if (!req.body.id) {
+        const lastProduct = await Product.findOne().sort({ id: -1 });
+        req.body.id = lastProduct && lastProduct.id ? lastProduct.id + 1 : 1;
+      }
+
       const product = new Product(req.body);
       await product.save();
       res.status(201).json({
@@ -87,18 +105,17 @@ router.post("/", verifyAdmin, async (req, res) => {
   }
 });
 
-// UPDATE product by custom id
+// UPDATE product by custom id or _id
 router.put("/:id", verifyAdmin, async (req, res) => {
   try {
-    const updatedProduct = await Product.findOneAndUpdate(
-      { id: Number(req.params.id) },
-      req.body,
-      { new: true }
-    );
-
-    if (!updatedProduct) {
+    let product = await findProduct(req.params.id);
+    if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
+
+    // Update fields
+    Object.assign(product, req.body);
+    const updatedProduct = await product.save();
 
     res.json({
       message: "Product updated successfully",
@@ -109,20 +126,20 @@ router.put("/:id", verifyAdmin, async (req, res) => {
   }
 });
 
-// DELETE product by custom id
+// DELETE product by custom id or _id
 router.delete("/:id", verifyAdmin, async (req, res) => {
   try {
-    const deletedProduct = await Product.findOneAndDelete({
-      id: Number(req.params.id),
-    });
-
-    if (!deletedProduct) {
+    const product = await findProduct(req.params.id);
+    
+    if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
+    await Product.deleteOne({ _id: product._id });
+
     res.json({
       message: "Product deleted successfully",
-      deletedProduct,
+      deletedProduct: product,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
