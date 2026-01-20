@@ -34,6 +34,8 @@ const categoryRoutes = require('./routes/categoryRoutes');
 app.use('/api/categories', categoryRoutes);
 const settingsRoutes = require('./routes/settingsRoutes');
 app.use('/api/settings', settingsRoutes);
+const notificationRoutes = require('./routes/notificationRoutes');
+app.use('/api/notifications', notificationRoutes);
 
 // 404 Handler
 app.use((req, res) => {

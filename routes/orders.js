@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
+const Notification = require('../models/Notification');
 
 // GET /api/orders - Get all orders
 router.get('/', async (req, res) => {
@@ -25,6 +26,19 @@ router.post('/', async (req, res) => {
 
     const order = new Order(orderData);
     await order.save();
+
+    // Create Admin Notification
+    try {
+      const newNotif = new Notification({
+        message: `New order received #${order._id.toString().substring(0, 8).toUpperCase()}`,
+        type: 'order',
+        orderId: order._id,
+        time: new Date()
+      });
+      await newNotif.save();
+    } catch (notifErr) {
+      console.error('Failed to create notification:', notifErr);
+    }
 
     // Respond with success
     res.status(201).json({

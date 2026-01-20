@@ -6,6 +6,12 @@ const siteSettingsSchema = new mongoose.Schema({
   bannerTitle: { type: String, default: 'Upgrade Your Digital Life' },
   bannerSubtitle: { type: String, default: 'Experience superior performance with our latest collection of premium gadgets and accessories.' },
   
+  // Store Info
+  storeName: { type: String, default: 'ELECKYO' },
+  contactEmail: { type: String, default: 'support@eleckyo.com' },
+  contactPhone: { type: String, default: '+1 (555) 000-0000' },
+  storeAddress: { type: String, default: '123 Tech Avenue, Silicon Valley, CA' },
+
   // Summer Sale / Offer Box Section
   offerTitle: { type: String, default: 'Summer Sale is Live' },
   offerSubtitle: { type: String, default: 'Get up to 50% off on premium headphones and smartwatches. Limited time offer.' },

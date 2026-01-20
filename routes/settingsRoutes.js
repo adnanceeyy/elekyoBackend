@@ -36,7 +36,11 @@ router.put("/", async (req, res) => {
       'offerSubtitle', 
       'offerImage', 
       'offerLink',
-      'promotions'
+      'promotions',
+      'storeName',
+      'contactEmail',
+      'contactPhone',
+      'storeAddress'
     ];
 
     allowedFields.forEach(field => {
