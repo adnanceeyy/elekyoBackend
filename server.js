@@ -19,7 +19,7 @@ const orderRoutes = require('./routes/orders');
 app.use('/api/orders', orderRoutes);
 // Home route
 app.get('/', (req, res) => {
-  res.send('Eleckyo Backend is running! 🎉🚀');
+  res.send('Eleckyo Backend v2.0 - Role System Active 🛡️');
 });
 
 // Routes

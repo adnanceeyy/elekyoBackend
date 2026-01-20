@@ -6,8 +6,8 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');
 
 // Helper to generate JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'fallbacksecret', {
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET || 'fallbacksecret', {
     expiresIn: '30d',
   });
 };
@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
         email: user.email,
         profileImage: user.profileImage,
         role: user.role, // Added role
-        token: generateToken(user._id),
+        token: generateToken(user._id, user.role),
       });
     } else {
       res.status(400).json({ message: 'Invalid user data' });
@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
         email: user.email,
         profileImage: user.profileImage,
         role: user.role, // Added role
-        token: generateToken(user._id),
+        token: generateToken(user._id, user.role),
       });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
@@ -122,7 +122,7 @@ router.post('/google-login', async (req, res) => {
       email: user.email,
       profileImage: user.profileImage,
       role: user.role, // Added role
-      token: generateToken(user._id),
+      token: generateToken(user._id, user.role),
     });
         
   } catch (error) {
@@ -161,7 +161,7 @@ router.put('/profile/:id', async (req, res) => {
       phone: user.phone,
       address: user.address,
       profileImage: user.profileImage,
-      token: generateToken(user._id),
+      token: generateToken(user._id, user.role),
     });
   } catch (error) {
     console.error('Profile Update Error:', error);
@@ -177,7 +177,10 @@ const verifyAdmin = (req, res, next) => {
   const token = authHeader.split(" ")[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallbacksecret');
-    // In a real app, you'd check decoded.role
+    if (decoded.role !== 'admin') {
+       return res.status(403).json({ message: 'Admin access only' });
+    }
+    req.user = decoded;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
@@ -233,6 +236,34 @@ router.get('/setup-admin', async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Promote current user to admin (Debugging/Dev usage)
+router.post('/promote-me', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ message: "No token" });
+  
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallbacksecret');
+    
+    // Find user
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    
+    // Promote
+    user.role = 'admin';
+    await user.save();
+    
+    // Return new token
+    res.json({
+      success: true,
+      role: 'admin',
+      token: generateToken(user._id, 'admin'),
+    });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 });
 
