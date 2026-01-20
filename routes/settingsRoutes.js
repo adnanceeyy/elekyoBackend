@@ -20,15 +20,30 @@ router.get("/", async (req, res) => {
 // UPDATE settings
 router.put("/", async (req, res) => {
   try {
-    const { homePageOfferImage, promotions } = req.body;
+    const updateData = req.body;
     let settings = await SiteSettings.findOne({ id: 'global_settings' });
     
     if (!settings) {
         settings = new SiteSettings({ id: 'global_settings' });
     }
 
-    if (homePageOfferImage !== undefined) settings.homePageOfferImage = homePageOfferImage;
-    if (promotions !== undefined) settings.promotions = promotions;
+    // List of allowed fields to update
+    const allowedFields = [
+      'homePageOfferImage', 
+      'bannerTitle', 
+      'bannerSubtitle', 
+      'offerTitle', 
+      'offerSubtitle', 
+      'offerImage', 
+      'offerLink',
+      'promotions'
+    ];
+
+    allowedFields.forEach(field => {
+      if (updateData[field] !== undefined) {
+        settings[field] = updateData[field];
+      }
+    });
 
     const updatedSettings = await settings.save();
     res.json(updatedSettings);

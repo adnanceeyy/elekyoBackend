@@ -5,6 +5,7 @@ const categorySchema = new mongoose.Schema({
   description: { type: String },
   color: { type: String, default: 'blue' }, // Tailwind color name like 'blue', 'red'
   icon: { type: String, default: '📦' }, // Emoji or icon identifier
+  image: { type: String, default: '' }, // Cover Image (Base64 or URL)
 }, {
   timestamps: true
 });
