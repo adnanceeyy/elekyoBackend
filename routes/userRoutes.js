@@ -143,7 +143,7 @@ router.put('/profile/:id', async (req, res) => {
     const user = await User.findById(id);
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User identity not found in database. 🕵️' });
     }
 
     // Update fields
@@ -154,18 +154,24 @@ router.put('/profile/:id', async (req, res) => {
 
     await user.save();
 
+    // Generate fresh token
+    const token = generateToken(user._id, user.role);
+
+    // Return the FULL user object to keep frontend state complete
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      phone: user.phone,
-      address: user.address,
+      phone: user.phone || "",
+      address: user.address || "",
       profileImage: user.profileImage,
-      token: generateToken(user._id, user.role),
+      role: user.role,
+      googleId: user.googleId,
+      token: token
     });
   } catch (error) {
     console.error('Profile Update Error:', error);
-    res.status(500).json({ message: error.message || 'Profile update failed' });
+    res.status(500).json({ message: error.message || 'Identity synchronization failed' });
   }
 });
 
