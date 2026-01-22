@@ -36,6 +36,9 @@ const settingsRoutes = require('./routes/settingsRoutes');
 app.use('/api/settings', settingsRoutes);
 const notificationRoutes = require('./routes/notificationRoutes');
 app.use('/api/notifications', notificationRoutes);
+const variantGroupRoutes = require('./routes/variantGroupRoutes');
+app.use('/api/variant-groups', variantGroupRoutes);
+
 
 // 404 Handler
 app.use((req, res) => {

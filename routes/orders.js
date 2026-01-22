@@ -29,8 +29,9 @@ router.post('/', async (req, res) => {
 
     // Create Admin Notification
     try {
+      const paymentInfo = orderData.paymentMethod === 'card' ? 'Online' : 'COD';
       const newNotif = new Notification({
-        message: `New order received #${order._id.toString().substring(0, 8).toUpperCase()}`,
+        message: `New Order #${order._id.toString().substring(0, 8).toUpperCase()} - ₹${order.paymentSummary.total} (${paymentInfo})`,
         type: 'order',
         orderId: order._id,
         time: new Date()

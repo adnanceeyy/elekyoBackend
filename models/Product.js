@@ -19,7 +19,8 @@ const productSchema = new mongoose.Schema({
   catogeryId: Number, // Your category number (1, 2, 3...)
   brand: String,
   model: String,
-  warranty: String
+  warranty: String,
+  variantGroup: String // To link products together (e.g., same model different colors)
 }, {
   timestamps: true // Adds createdAt and updatedAt automatically
 });

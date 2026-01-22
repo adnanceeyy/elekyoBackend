@@ -28,6 +28,8 @@ const orderSchema = new mongoose.Schema({
     currency: { type: String, default: 'INR' },
     total: { type: Number, required: true }
   },
+  paymentMethod: { type: String, default: 'cod' },
+  paymentId: { type: String }, // Razorpay Payment ID / Transaction ID
   status: { type: String, default: 'pending' }, // pending, confirmed, shipped, etc.
   createdAt: { type: Date, default: Date.now }
 });
