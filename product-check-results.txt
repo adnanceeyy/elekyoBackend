@@ -1,0 +1,77 @@
+✅ Connected to MongoDB
+
+📊 Total products in database: 44
+
+📦 Sample products:
+
+1. Mouse
+   ID: 2
+   Price: ₹999
+   Stock: 2345
+   Category: Mouses
+   Image: Yes
+
+2. Smart Watch
+   ID: 3
+   Price: ₹1499
+   Stock: 54345
+   Category: Watch 
+   Image: Yes
+
+3. Wireless Speaker
+   ID: 4
+   Price: ₹999
+   Stock: 54321
+   Category: Speaker
+   Image: Yes
+
+4. Air pods
+   ID: 5
+   Price: ₹799
+   Stock: 987456
+   Category: Headsets
+   Image: Yes
+
+5. Keyboard
+   ID: 6
+   Price: ₹1899
+   Stock: 112
+   Category: Keybord
+   Image: Yes
+
+6. Smart TV
+   ID: 11
+   Price: ₹8999
+   Stock: 23456
+   Category: computer
+   Image: Yes
+
+7. Mac Book
+   ID: 12
+   Price: ₹159999
+   Stock: 12345
+   Category: computer
+   Image: Yes
+
+8. Nikon Cam
+   ID: 13
+   Price: ₹59999
+   Stock: 8765
+   Category: Cameras
+   Image: Yes
+
+9. Drone
+   ID: 14
+   Price: ₹3799
+   Stock: 234567
+   Category: Accessories 
+   Image: Yes
+
+10. Drimmer
+   ID: 15
+   Price: ₹899
+   Stock: 23456
+   Category: Accessories 
+   Image: Yes
+
+✅ Disconnected from MongoDB
