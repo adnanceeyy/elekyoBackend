@@ -8,8 +8,19 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// Middleware - CORS Configuration
+app.use(cors({
+  origin: [
+    'https://elekyo.vercel.app',           // Frontend production
+    'https://adminelekyo.vercel.app',      // Admin panel production
+    'http://localhost:5173',                // Vite dev server
+    'http://localhost:3000',                // Alternative dev port
+    'http://localhost:5000'                 // Backend dev
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
