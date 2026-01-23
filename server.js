@@ -14,6 +14,8 @@ app.use(cors({
     'https://elekyo.vercel.app',           // Frontend production
     'https://adminelekyo.vercel.app',      // Admin panel production
     'http://localhost:5173',                // Vite dev server
+    'http://localhost:5174',                // Vite dev server (alt)
+    'http://localhost:5175',                // Vite dev server (alt)
     'http://localhost:3000',                // Alternative dev port
     'http://localhost:5000'                 // Backend dev
   ],
