@@ -1,0 +1,25 @@
+{
+  "_id": "69731f01ac2c3e12774b0ed9",
+  "email": "adnansuperbazar@gmail.com",
+  "items": [
+    {
+      "id": "50",
+      "name": "iPhone 17 Pro",
+      "price": 210000,
+      "image": "data:image/webp;base64,UklGRno+AABXRUJQVlA4WAoAAAA... [LEN: 21359]",
+      "qty": 1,
+      "_id": "69731f01ac2c3e12774b0eda"
+    },
+    {
+      "id": "52",
+      "name": "Porsche ",
+      "price": 1800,
+      "image": "data:image/webp;base64,UklGRhy2AABXRUJQVlA4WAoAAAA... [LEN: 62195]",
+      "qty": 1,
+      "_id": "6973210bac2c3e12774b0f28"
+    }
+  ],
+  "createdAt": "2026-01-23T07:10:57.432Z",
+  "updatedAt": "2026-01-23T07:19:39.478Z",
+  "__v": 1
+}
