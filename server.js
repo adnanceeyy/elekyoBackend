@@ -10,19 +10,29 @@ const app = express();
 
 // Middleware - CORS Configuration
 app.use(cors({
-  origin: [
-    'https://elekyo.vercel.app',           // Frontend production
-    'https://adminelekyo.vercel.app',      // Admin panel production
-    'http://localhost:5173',                // Vite dev server
-    'http://localhost:5174',                // Vite dev server (alt)
-    'http://localhost:5175',                // Vite dev server (alt)
-    'http://localhost:3000',                // Alternative dev port
-    'http://localhost:5000'                 // Backend dev
-  ],
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'https://elekyo.vercel.app',
+      'https://adminelekyo.vercel.app',
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'http://localhost:5000'
+    ];
+    
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
@@ -30,6 +40,7 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const orderRoutes = require('./routes/orders');
 app.use('/api/orders', orderRoutes);
+
 // Home route
 app.get('/', (req, res) => {
   res.send('Eleckyo Backend v2.0 - Role System Active 🛡️');
@@ -79,22 +90,23 @@ const mongooseOptions = {
 };
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, mongooseOptions)
-  .then(() => console.log('MongoDB Connected ✅'))
-  .catch((err) => {
-    console.error('MongoDB Connection Error ❌:');
-    console.error('Name:', err.name);
-    console.error('Message:', err.message);
-    console.error('Full Error:', err);
-    
-    if (err.name === 'MongoParseError') {
-      console.error('Check your MONGO_URI format in Vercel settings');
-    }
-  });
+// Note: In Vercel, we need to ensure connection is reused
+if (mongoose.connection.readyState === 0) {
+    mongoose.connect(process.env.MONGO_URI, mongooseOptions)
+    .then(() => console.log('MongoDB Connected ✅'))
+    .catch((err) => {
+        console.error('MongoDB Connection Error ❌:', err);
+    });
+}
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => {  // ← Important: add '0.0.0.0'
-  console.log(`Server running on port ${PORT} 🚀`);
-  console.log(`Images available at: /uploads/images/your-image.png 🖼️`);
-});
+// Start server (Only if running directly)
+if (require.main === module) {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT} 🚀`);
+    console.log(`Images available at: /uploads/images/your-image.png 🖼️`);
+    });
+}
+
+// Export the app for Vercel
+module.exports = app;
